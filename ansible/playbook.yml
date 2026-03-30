@@ -226,7 +226,7 @@
       shell: |
         cd {{ app_dir }}
         pm2 delete app 2>/dev/null || true
-        pm2 start index.js --name app
+        pm2 start server.js --name app
         pm2 save
         env PATH=$PATH:/usr/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu | tail -1 | bash || true
       args:
@@ -285,7 +285,7 @@
       ignore_errors: yes
 
     - name: Print PM2 logs if app did not start
-      shell: pm2 logs --lines 100 app
+      shell: pm2 logs --lines 100 app --nostream
       become: yes
       become_user: ubuntu
       when: app_wait is failed
