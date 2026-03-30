@@ -290,6 +290,19 @@
       become_user: ubuntu
       when: app_wait is failed
 
+    - name: Collect PM2 process list for diagnostics
+      shell: pm2 list
+      become: yes
+      become_user: ubuntu
+      register: pm2_list
+      when: app_wait is failed
+      changed_when: false
+
+    - name: Show PM2 process list
+      debug:
+        msg: "{{ pm2_list.stdout_lines }}"
+      when: app_wait is failed and pm2_list is defined
+
     - name: Fail if app did not start
       fail:
         msg: "Application failed to start on port {{ app_port }}. Check PM2 logs above."
